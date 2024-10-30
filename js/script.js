@@ -33,7 +33,7 @@ const scoreValues = {
 
 const totalCells = 25;
 const MaxMovesAndGoalScore = 20;
-let fillCountOnLastImageMatch = 3;
+let fillCountOnLastImageMatch = 2;
 
 let board = document.getElementById("board");
 let score = 0;
@@ -46,6 +46,7 @@ let placeholder = null;
 let gameMode = "Version1";
 let activeTouchId = null;
 
+const goalDisplay = document.getElementById("goals");
 const scoreDisplay = document.getElementById("score");
 const movesDisplay = document.getElementById("moves");
 const goalsSection = document.getElementById("goalsSection");
@@ -147,9 +148,12 @@ function initVersion2() {
   gameMode = "Version2";
   score = 0;
   moves = Infinity;
+  scoreDisplay.textContent = score;
+
   goalsSection.classList.remove("hidden");
   movesSection.classList.add("hidden");
-  scoreDisplay.textContent = score;
+
+  goalDisplay.textContent = MaxMovesAndGoalScore;
 
   createBoard();
 }
@@ -205,8 +209,14 @@ function handleDrop(event) {
 
   removeAllMatchedClasses();
 
-  const draggedEmoji = event.dataTransfer.getData("text/plain");
   const targetCell = event.target.closest(".cell");
+
+  if (!targetCell) {
+    returnEmojiToOriginalCell();
+    return;
+  }
+
+  const draggedEmoji = event.dataTransfer.getData("text/plain");
   const targetEmoji = targetCell.querySelector("img").src;
 
   const draggedEmojiFile = draggedEmoji.split("/").pop();
@@ -451,11 +461,8 @@ function resetGameVersion2() {
   document.getElementById("score").textContent = score;
   document.getElementById("progress-bar").style.width = "0%";
 
-  const movesSection = document.getElementById("movesSection");
-  const goalsSection = document.getElementById("goalsSection");
-
   if (movesSection) movesSection.style.display = "none";
-  if (goalsSection) goalsSection.style.display = "block";
+  goalsSection.style.display = "block";
 
   createBoard();
 }
@@ -471,6 +478,15 @@ document.querySelector(".modal .close").addEventListener("click", hideModal);
 window.addEventListener("click", (event) => {
   if (event.target === document.getElementById("gameModal")) hideModal();
 });
+// Adding event listeners for the buttons to start each version of the game
+document.getElementById("Version1Button").addEventListener("click", () => {
+  resetGameVersion1();
+});
+
+document.getElementById("Version2Button").addEventListener("click", () => {
+  initVersion2();
+});
+
 document.getElementById("Version3Button").addEventListener("click", () => {
   initVersion3();
 });
