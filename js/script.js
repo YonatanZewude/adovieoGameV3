@@ -1,3 +1,4 @@
+// Global variable for image paths
 const imagePaths = {
   blueberry: "https://content.adoveodemo.com/1729499244809_1.png",
   strawberry: "https://content.adoveodemo.com/1729499250486_2.png",
@@ -8,6 +9,8 @@ const imagePaths = {
   watermelon: "https://content.adoveodemo.com/1729499281547_7.png",
   drink: "https://content.adoveodemo.com/1729499295834_8.png",
 };
+
+// Array with all image paths for the game
 
 const emojiSequence = [
   imagePaths.blueberry,
@@ -20,6 +23,7 @@ const emojiSequence = [
   imagePaths.drink,
 ];
 
+// Score values for each image
 const scoreValues = {
   [imagePaths.blueberry]: 1,
   [imagePaths.strawberry]: 2,
@@ -33,7 +37,6 @@ const scoreValues = {
 
 const totalCells = 25;
 const MaxMovesAndGoalScore = 20;
-let fillCountOnLastImageMatch = 2;
 
 let board = document.getElementById("board");
 let score = 0;
@@ -43,55 +46,101 @@ let originalContent = "";
 let originalCell = null;
 let touchElement = null;
 let placeholder = null;
-let gameMode = "Version1";
-let activeTouchId = null;
+let gameMode = "Version1"; // Default version
+const fillCountOnLastImageMatch = 3;
 
-const goalDisplay = document.getElementById("goals");
 const scoreDisplay = document.getElementById("score");
 const movesDisplay = document.getElementById("moves");
 const goalsSection = document.getElementById("goalsSection");
 const movesSection = document.getElementById("movesSection");
-const isMobile =
-  "ontouchstart" in window ||
-  /Mobi|Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);
 
-window.onload = function () {
-  document.querySelectorAll("img").forEach((img) => {
-    img.addEventListener(
-      "touchstart",
-      function (e) {
-        e.preventDefault();
-      },
-      { passive: false }
-    );
-  });
-};
+// const moveButton = document.getElementById("Limited_number_of_moves");
+// moveButton.addEventListener("click", () => {
+//   gameMode = "Version 1";
+//   resetGameVersion1();
+// });
 
-function fillEmptyCells() {
-  const emptyCells = [...document.querySelectorAll(".cell img[src='']")];
+// const scoreButton = document.getElementById("Unlimited_number_of_moves");
+// scoreButton.addEventListener("click", () => {
+//   gameMode = "Version2";
+//   initVersion2();
+// });
 
-  if (emptyCells.length > fillCountOnLastImageMatch) {
-    const shuffledEmptyCells = emptyCells.sort(() => 0.5 - Math.random());
-    for (let i = 0; i < fillCountOnLastImageMatch; i++) {
-      shuffledEmptyCells[i].src = getRandomEmoji();
-    }
-  } else {
-    emptyCells.forEach((cell) => {
-      cell.src = getRandomEmoji();
-    });
-  }
+const version3_1Button = document.getElementById("Version3_1Button");
+const version3_2Button = document.getElementById("Version3_2Button");
+const version1Button = document.getElementById("Version1Button");
+const version2Button = document.getElementById("Version2Button");
+
+version1Button.addEventListener("click", resetGameVersion1);
+version2Button.addEventListener("click", initVersion2);
+version3_1Button.addEventListener("click", initVersion3_1);
+version3_2Button.addEventListener("click", initVersion3_2);
+
+function resetGameVersion1() {
+  gameMode = "Version1";
+  score = 0;
+  moves = MaxMovesAndGoalScore;
+  scoreDisplay.textContent = score;
+  movesDisplay.textContent = moves;
+
+  movesSection.style.display = "block";
+  goalsSection.style.display = "none";
+  console.log("Aktiv version: Version 1");
+
+  createBoard();
+}
+
+function initVersion2() {
+  gameMode = "Version2";
+  score = 0;
+  moves = Infinity;
+
+  movesSection.style.display = "none";
+  goalsSection.style.display = "block";
+
+  scoreDisplay.textContent = score;
+  // document.getElementById("progress-bar").style.width = "0%";
+  console.log("Aktiv version: Version 2");
+
+  createBoard();
+}
+
+// Initiera Version 3.1
+function initVersion3_1() {
+  gameMode = "Version3_1";
+  score = 0;
+  moves = MaxMovesAndGoalScore;
+
+  movesSection.style.display = "block";
+  goalsSection.style.display = "none";
+
+  scoreDisplay.textContent = score;
+  movesDisplay.textContent = moves;
+  console.log("Aktiv version: Version 3,1");
+  createBoard();
+}
+
+// Initiera Version 3.2
+function initVersion3_2() {
+  gameMode = "Version3_2";
+  score = 0;
+  moves = Infinity;
+
+  movesSection.style.display = "none";
+  goalsSection.style.display = "block";
+
+  scoreDisplay.textContent = score;
+  console.log("Aktiv version: Version 3,2");
+  createBoard();
 }
 
 function switchGameMode() {
-  if (gameMode === "Version1") {
+  if (gameMode === "Version 1") {
     initVersion2();
     gameMode = "Version2";
-  } else if (gameMode === "Version2") {
-    initVersion3();
-    gameMode = "Version3";
   } else {
     resetGameVersion1();
-    gameMode = "Version1";
+    gameMode = "Version 1";
   }
 }
 
@@ -105,80 +154,41 @@ if (gameMode === "Version1") {
 } else {
   nrOfGols.style.display = "block";
 }
-
-function resetGameVersion1() {
-  gameMode = "Version1";
-  score = 0;
-  moves = MaxMovesAndGoalScore;
-  scoreDisplay.textContent = score;
-  movesDisplay.textContent = moves;
-
-  movesSection.classList.remove("hidden");
-  goalsSection.classList.add("hidden");
-
-  createBoard();
-}
-
+// Create game board with random images in each cell
 function createBoard() {
   board.innerHTML = "";
+
   for (let i = 0; i < totalCells; i++) {
     const cell = document.createElement("div");
     cell.className = "cell";
     cell.setAttribute("draggable", true);
     const imgElement = document.createElement("img");
+
     imgElement.src = getRandomEmoji();
     cell.appendChild(imgElement);
     board.addEventListener("dragstart", handleDragStart);
     board.addEventListener("dragover", handleDragOver);
     board.addEventListener("drop", handleDrop);
     board.addEventListener("dragend", handleDragEnd);
-    board.addEventListener("touchstart", handleTouchStart, { passive: false });
-    board.addEventListener("touchmove", handleTouchMove, { passive: false });
-    board.addEventListener("touchend", handleTouchEnd, { passive: false });
+
+    board.addEventListener("touchstart", handleTouchStart, { passive: true });
+    board.addEventListener("touchmove", handleTouchMove, { passive: true });
+    board.addEventListener("touchend", handleTouchEnd), { passive: true };
 
     board.appendChild(cell);
   }
 }
 
-document.addEventListener("selectstart", function (e) {
-  e.preventDefault();
-});
-
-function initVersion2() {
-  gameMode = "Version2";
-  score = 0;
-  moves = Infinity;
-  scoreDisplay.textContent = score;
-
-  goalsSection.classList.remove("hidden");
-  movesSection.classList.add("hidden");
-
-  goalDisplay.textContent = MaxMovesAndGoalScore;
-
-  createBoard();
-}
-
-function initVersion3() {
-  gameMode = "Version3";
-  score = 0;
-  moves = Infinity;
-
-  goalsSection.classList.add("hidden");
-  movesSection.classList.add("hidden");
-  scoreDisplay.textContent = score;
-
-  createBoard();
-}
-
 function checkGameOver() {
-  if (gameMode === "Version1") {
-    if (moves <= 0)
-      showModal(
-        `Game Over! You scored ${score} points in ${MaxMovesAndGoalScore} moves. Try again!`
-      );
-  } else if (gameMode === "Version2") {
-    if (score >= MaxMovesAndGoalScore)
-      showModal(`Congratulations! You reached ${score} points! You Win!`);
+  if ((gameMode === "Version1" || gameMode === "Version3_1") && moves <= 0) {
+    showModal(
+      `Game Over! You scored ${score} points in ${MaxMovesAndGoalScore} moves. Try again!`
+    );
+  } else if (
+    (gameMode === "Version2" || gameMode === "Version3_2") &&
+    score >= MaxMovesAndGoalScore
+  ) {
+    showModal(`Congratulations! You reached ${score} points and won the game!`);
   }
 }
 
@@ -209,46 +219,55 @@ function handleDrop(event) {
 
   removeAllMatchedClasses();
 
-  const targetCell = event.target.closest(".cell");
-
-  if (!targetCell) {
-    returnEmojiToOriginalCell();
-    return;
-  }
-
   const draggedEmoji = event.dataTransfer.getData("text/plain");
+  const targetCell = event.target.closest(".cell");
   const targetEmoji = targetCell.querySelector("img").src;
 
   const draggedEmojiFile = draggedEmoji.split("/").pop();
   const targetEmojiFile = targetEmoji.split("/").pop();
 
   if (draggedEmojiFile === targetEmojiFile && draggedElement !== targetCell) {
+    // Om matchning sker
     incrementScore(draggedEmoji);
+    moves--;
+    movesDisplay.textContent = moves;
 
-    if (gameMode === "Version3") {
-      originalCell.querySelector("img").src = "";
-      targetCell.querySelector("img").src = getNextEmoji(draggedEmoji);
-
-      if (draggedEmojiFile === imagePaths.drink.split("/").pop()) {
-        fillEmptyCells();
-      }
-    } else {
+    // Kontrollera om spelet är i Version 1 eller Version 2
+    if (gameMode === "Version1" || gameMode === "Version2") {
+      // Fyll båda cellerna i Version 1 och Version 2
       const nextEmojis = getNextTwoEmojis(draggedEmoji);
       originalCell.querySelector("img").src = nextEmojis[0];
       targetCell.querySelector("img").src = nextEmojis[1];
+    } else {
+      // I Version 3, behåll dragna cellen tom och fyll bara släpp-cellen
+      originalCell.querySelector("img").src = "";
+      targetCell.querySelector("img").src =
+        getNextEmojiInSequence(draggedEmoji);
+
+      // Speciell hantering för "imagePaths.drink" i Version 3
+      if (draggedEmojiFile === imagePaths.drink.split("/").pop()) {
+        fillEmptyCells(fillCountOnLastImageMatch);
+      }
     }
 
+    // Kontrollera om spelet är över
     checkGameOver();
   } else {
+    // Återställ om ingen matchning sker
     returnEmojiToOriginalCell();
   }
 }
 
-function getNextEmoji(matchedEmoji) {
-  const fileName = matchedEmoji.split("/").pop();
-  const matchedIndex = emojiSequence.findIndex((image) =>
-    image.includes(fileName)
-  );
+function fillEmptyCells(fillCount) {
+  const emptyCells = Array.from(document.querySelectorAll(".cell img[src='']"));
+  const cellsToFill = emptyCells.slice(0, fillCount);
+  cellsToFill.forEach((cell) => {
+    cell.src = getRandomEmoji();
+  });
+}
+
+function getNextEmojiInSequence(matchedEmoji) {
+  const matchedIndex = emojiSequence.findIndex((img) => img === matchedEmoji);
   return emojiSequence[(matchedIndex + 1) % emojiSequence.length];
 }
 
@@ -268,15 +287,11 @@ function returnEmojiToOriginalCell() {
 }
 
 function handleTouchStart(event) {
-  if (event.touches.length > 1) return;
-
   const touch = event.touches[0];
-  activeTouchId = touch.identifier;
 
   draggedElement = document
     .elementFromPoint(touch.clientX, touch.clientY)
     ?.closest(".cell");
-
   if (draggedElement) {
     const imgElement = draggedElement.querySelector("img");
 
@@ -287,39 +302,33 @@ function handleTouchStart(event) {
 
       placeholder = createPlaceholder(originalContent);
       document.body.appendChild(placeholder);
-
       movePlaceholder(touch.clientX, touch.clientY);
     } else {
-      console.error("No <img> element found in the selected cell.");
+      console.error("Inget <img> element hittades i den valda cellen.");
     }
+  } else {
   }
 }
 
-function movePlaceholder(x, y) {
-  if (placeholder) {
-    placeholder.style.left = `${x - placeholder.offsetWidth / 2}px`;
-    placeholder.style.top = `${y - placeholder.offsetHeight / 2}px`;
-  }
-}
 function handleTouchMove(event) {
-  event.preventDefault();
-
-  const touch = Array.from(event.touches).find(
-    (t) => t.identifier === activeTouchId
-  );
-  if (!touch) return;
-
+  const touch = event.touches[0];
   movePlaceholder(touch.clientX, touch.clientY);
-
   touchElement = document
     .elementFromPoint(touch.clientX, touch.clientY)
-    ?.closest(".cell");
+    .closest(".cell");
 }
+
+function handleTouchMoveWithPreventDefault(event) {
+  event.preventDefault();
+  const touch = event.touches[0];
+  movePlaceholder(touch.clientX, touch.clientY);
+  touchElement = document
+    .elementFromPoint(touch.clientX, touch.clientY)
+    .closest(".cell");
+}
+
 function handleTouchEnd(event) {
-  const touch = Array.from(event.changedTouches).find(
-    (t) => t.identifier === activeTouchId
-  );
-  if (!touch) return;
+  removeAllMatchedClasses();
 
   if (touchElement && touchElement !== originalCell) {
     const draggedEmojiFile = originalContent.split("/").pop();
@@ -330,35 +339,34 @@ function handleTouchEnd(event) {
 
     if (draggedEmojiFile === targetEmojiFile) {
       incrementScore(originalContent);
+      updateMovesAndProgress();
 
-      if (gameMode === "Version3") {
-        originalCell.querySelector("img").src = "";
-        touchElement.querySelector("img").src = getNextEmoji(draggedEmojiFile);
+      const [nextDraggedEmoji, nextTargetEmoji] =
+        getNextTwoEmojis(draggedEmojiFile);
+      updateEmojiImages(nextDraggedEmoji, nextTargetEmoji);
 
-        if (draggedEmojiFile === imagePaths.drink.split("/").pop()) {
-          fillEmptyCells();
-        }
-      } else {
-        const [nextDraggedEmoji, nextTargetEmoji] =
-          getNextTwoEmojis(draggedEmojiFile);
-        updateEmojiImages(nextDraggedEmoji, nextTargetEmoji);
-      }
+      draggedElement.classList.add("matched");
+      touchElement.classList.add("matched");
+
+      draggedElement.addEventListener("animationend", removeMatchedClass);
+      draggedElement.addEventListener("transitionend", removeMatchedClass);
+
+      touchElement.addEventListener("animationend", removeMatchedClass);
+      touchElement.addEventListener("transitionend", removeMatchedClass);
 
       checkGameOver();
     } else {
       returnEmojiToOriginalCell();
     }
-  } else {
-    returnEmojiToOriginalCell();
   }
 
   cleanupTouchElements();
-  activeTouchId = null;
 }
 
 function updateMovesAndProgress() {
   moves--;
   document.getElementById("moves").textContent = moves;
+  //updateProgressBarBasedOnMoves();
 }
 
 function updateEmojiImages(nextDraggedEmoji, nextTargetEmoji) {
@@ -391,6 +399,7 @@ function removeAllMatchedClasses() {
   });
 }
 
+// Create a visual placeholder for the dragged element
 function createPlaceholder(src) {
   const placeholder = document.createElement("img");
   placeholder.src = src;
@@ -400,12 +409,22 @@ function createPlaceholder(src) {
   placeholder.style.pointerEvents = "none";
   return placeholder;
 }
+// // Update the progress bar based on remaining moves
+// function updateProgressBarBasedOnMoves() {
+//   const progressPercentage =
+//     ((MaxMovesAndGoalScore - moves) / MaxMovesAndGoalScore) * 100;
+//   document.getElementById(
+//     "progress-bar"
+//   ).style.width = `${progressPercentage}%`;
+// }
 
 function movePlaceholder(x, y) {
-  if (placeholder) {
-    placeholder.style.left = `${x - placeholder.offsetWidth / 2}px`;
-    placeholder.style.top = `${y - placeholder.offsetHeight / 2}px`;
-  }
+  if (!placeholder) return; // Kontrollera om placeholder finns innan du ändrar position
+
+  window.requestAnimationFrame(() => {
+    placeholder.style.left = `${x - placeholder.width / 2}px`;
+    placeholder.style.top = `${y - placeholder.height / 2}px`;
+  });
 }
 
 function throttle(func, limit) {
@@ -423,6 +442,7 @@ function throttle(func, limit) {
 
 document.body.addEventListener("touchmove", throttle(handleTouchMove, 100));
 
+// Get the next two emojis based on the matched emoji
 function getNextTwoEmojis(matchedEmoji) {
   const fileName = matchedEmoji.split("/").pop();
   const matchedIndex = emojiSequence.findIndex((image) =>
@@ -452,6 +472,10 @@ function incrementScore(matchedEmoji) {
     ];
   document.getElementById("score").textContent = score;
 
+  // document.getElementById("progress-bar").style.width = `${
+  //   (score / MaxMovesAndGoalScore) * 100
+  // }%`;
+
   checkGameOver();
 }
 
@@ -461,32 +485,28 @@ function resetGameVersion2() {
   document.getElementById("score").textContent = score;
   document.getElementById("progress-bar").style.width = "0%";
 
+  const movesSection = document.getElementById("movesSection");
+  const goalsSection = document.getElementById("goalsSection");
+
   if (movesSection) movesSection.style.display = "none";
-  goalsSection.style.display = "block";
+  if (goalsSection) goalsSection.style.display = "block";
 
   createBoard();
 }
+
+// Function call to start Version2 game manually
+//initVersion2();
 
 function resetGame() {
   location.reload();
 }
 
 createBoard();
-
+document.body.addEventListener("touchmove", handleTouchMoveWithPreventDefault, {
+  passive: false,
+});
 document.getElementById("modalButton").addEventListener("click", hideModal);
 document.querySelector(".modal .close").addEventListener("click", hideModal);
 window.addEventListener("click", (event) => {
   if (event.target === document.getElementById("gameModal")) hideModal();
-});
-// Adding event listeners for the buttons to start each version of the game
-document.getElementById("Version1Button").addEventListener("click", () => {
-  resetGameVersion1();
-});
-
-document.getElementById("Version2Button").addEventListener("click", () => {
-  initVersion2();
-});
-
-document.getElementById("Version3Button").addEventListener("click", () => {
-  initVersion3();
 });
