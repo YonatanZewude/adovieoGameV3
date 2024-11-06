@@ -221,8 +221,14 @@ function handleDrop(event) {
 
   const draggedEmoji = event.dataTransfer.getData("text/plain");
   const targetCell = event.target.closest(".cell");
-  const targetEmoji = targetCell.querySelector("img").src;
 
+  // If no target cell is found, return the emoji to the original cell
+  if (!targetCell) {
+    returnEmojiToOriginalCell();
+    return;
+  }
+
+  const targetEmoji = targetCell.querySelector("img").src;
   const draggedEmojiFile = draggedEmoji.split("/").pop();
   const targetEmojiFile = targetEmoji.split("/").pop();
 
@@ -234,23 +240,27 @@ function handleDrop(event) {
 
     // Kontrollera om spelet är i Version 1 eller Version 2
     if (gameMode === "Version1" || gameMode === "Version2") {
-      // Fyll båda cellerna i Version 1 och Version 2
       const nextEmojis = getNextTwoEmojis(draggedEmoji);
       originalCell.querySelector("img").src = nextEmojis[0];
       targetCell.querySelector("img").src = nextEmojis[1];
     } else {
-      // I Version 3, behåll dragna cellen tom och fyll bara släpp-cellen
       originalCell.querySelector("img").src = "";
       targetCell.querySelector("img").src =
         getNextEmojiInSequence(draggedEmoji);
 
-      // Speciell hantering för "imagePaths.drink" i Version 3
       if (draggedEmojiFile === imagePaths.drink.split("/").pop()) {
         fillEmptyCells(fillCountOnLastImageMatch);
       }
     }
 
-    // Kontrollera om spelet är över
+    draggedElement.classList.add("matched");
+    targetCell.classList.add("matched");
+
+    draggedElement.addEventListener("animationend", removeMatchedClass);
+    draggedElement.addEventListener("transitionend", removeMatchedClass);
+    targetCell.addEventListener("animationend", removeMatchedClass);
+    targetCell.addEventListener("transitionend", removeMatchedClass);
+
     checkGameOver();
   } else {
     // Återställ om ingen matchning sker
@@ -341,16 +351,31 @@ function handleTouchEnd(event) {
       incrementScore(originalContent);
       updateMovesAndProgress();
 
-      const [nextDraggedEmoji, nextTargetEmoji] =
-        getNextTwoEmojis(draggedEmojiFile);
-      updateEmojiImages(nextDraggedEmoji, nextTargetEmoji);
+      // Kontrollera om spelet är i Version 1, Version 2, eller Version 3.1/3.2
+      if (gameMode === "Version1" || gameMode === "Version2") {
+        // Fyll båda cellerna i Version 1 och Version 2
+        const [nextDraggedEmoji, nextTargetEmoji] =
+          getNextTwoEmojis(draggedEmojiFile);
+        updateEmojiImages(nextDraggedEmoji, nextTargetEmoji);
+      } else {
+        // I Version 3.1 och Version 3.2, hantera specifikt enligt reglerna
+        originalCell.querySelector("img").src = "";
+        touchElement.querySelector("img").src =
+          getNextEmojiInSequence(draggedEmojiFile);
 
+        // Speciell hantering för "imagePaths.drink" i Version 3.1 och 3.2
+        if (draggedEmojiFile === imagePaths.drink.split("/").pop()) {
+          fillEmptyCells(fillCountOnLastImageMatch);
+        }
+      }
+
+      // Lägg till `matched`-klassen till de matchade elementen
       draggedElement.classList.add("matched");
       touchElement.classList.add("matched");
 
+      // Lägg till lyssnare för att ta bort `matched`-klassen när animationen/övergången är klar
       draggedElement.addEventListener("animationend", removeMatchedClass);
       draggedElement.addEventListener("transitionend", removeMatchedClass);
-
       touchElement.addEventListener("animationend", removeMatchedClass);
       touchElement.addEventListener("transitionend", removeMatchedClass);
 
