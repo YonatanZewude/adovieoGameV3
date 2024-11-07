@@ -1,4 +1,3 @@
-// Global variable for image paths
 const imagePaths = {
   blueberry: "https://content.adoveodemo.com/1729499244809_1.png",
   strawberry: "https://content.adoveodemo.com/1729499250486_2.png",
@@ -9,8 +8,6 @@ const imagePaths = {
   watermelon: "https://content.adoveodemo.com/1729499281547_7.png",
   drink: "https://content.adoveodemo.com/1729499295834_8.png",
 };
-
-// Array with all image paths for the game
 
 const emojiSequence = [
   imagePaths.blueberry,
@@ -23,7 +20,6 @@ const emojiSequence = [
   imagePaths.drink,
 ];
 
-// Score values for each image
 const scoreValues = {
   [imagePaths.blueberry]: 1,
   [imagePaths.strawberry]: 2,
@@ -222,7 +218,6 @@ function handleDrop(event) {
   const draggedEmoji = event.dataTransfer.getData("text/plain");
   const targetCell = event.target.closest(".cell");
 
-  // If no target cell is found, return the emoji to the original cell
   if (!targetCell) {
     returnEmojiToOriginalCell();
     return;
@@ -233,12 +228,10 @@ function handleDrop(event) {
   const targetEmojiFile = targetEmoji.split("/").pop();
 
   if (draggedEmojiFile === targetEmojiFile && draggedElement !== targetCell) {
-    // Om matchning sker
     incrementScore(draggedEmoji);
     moves--;
     movesDisplay.textContent = moves;
 
-    // Kontrollera om spelet är i Version 1 eller Version 2
     if (gameMode === "Version1" || gameMode === "Version2") {
       const nextEmojis = getNextTwoEmojis(draggedEmoji);
       originalCell.querySelector("img").src = nextEmojis[0];
@@ -263,7 +256,6 @@ function handleDrop(event) {
 
     checkGameOver();
   } else {
-    // Återställ om ingen matchning sker
     returnEmojiToOriginalCell();
   }
 }
@@ -369,11 +361,9 @@ function handleTouchEnd(event) {
         }
       }
 
-      // Lägg till `matched`-klassen till de matchade elementen
       draggedElement.classList.add("matched");
       touchElement.classList.add("matched");
 
-      // Lägg till lyssnare för att ta bort `matched`-klassen när animationen/övergången är klar
       draggedElement.addEventListener("animationend", removeMatchedClass);
       draggedElement.addEventListener("transitionend", removeMatchedClass);
       touchElement.addEventListener("animationend", removeMatchedClass);
@@ -537,7 +527,6 @@ document
     document.querySelector(".dropdown-content").classList.toggle("show");
   });
 
-// Stänger dropdown-menyn om man klickar utanför den
 window.onclick = function (event) {
   if (
     !event.target.matches(".dropdown-button") &&
