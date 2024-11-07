@@ -161,7 +161,7 @@ function createBoard() {
   for (let i = 0; i < totalCells; i++) {
     const cell = document.createElement("div");
     cell.className = "cell";
-    cell.setAttribute("draggable", true);
+    //cell.setAttribute("draggable", true);
     const imgElement = document.createElement("img");
 
     imgElement.src = getRandomEmoji();
@@ -444,11 +444,20 @@ function createPlaceholder(src) {
 // }
 
 function movePlaceholder(x, y) {
-  if (!placeholder) return; // Kontrollera om placeholder finns innan du ändrar position
+  if (!placeholder) return;
+
+  const placeholderWidth = placeholder.offsetWidth;
+  const placeholderHeight = placeholder.offsetHeight;
 
   window.requestAnimationFrame(() => {
-    placeholder.style.left = `${x - placeholder.width / 2}px`;
-    placeholder.style.top = `${y - placeholder.height / 2}px`;
+    if (placeholder) {
+      placeholder.style.left = `${x - placeholderWidth / 2}px`;
+      placeholder.style.top = `${y - placeholderHeight / 2}px`;
+    } else {
+      console.warn(
+        "Placeholder element is missing when trying to set position."
+      );
+    }
   });
 }
 
@@ -521,6 +530,28 @@ function resetGameVersion2() {
 
 // Function call to start Version2 game manually
 //initVersion2();
+// JavaScript för att toggla dropdown-menyn
+document
+  .querySelector(".dropdown-button")
+  .addEventListener("click", function () {
+    document.querySelector(".dropdown-content").classList.toggle("show");
+  });
+
+// Stänger dropdown-menyn om man klickar utanför den
+window.onclick = function (event) {
+  if (
+    !event.target.matches(".dropdown-button") &&
+    !event.target.matches(".arrow")
+  ) {
+    const dropdowns = document.getElementsByClassName("dropdown-content");
+    for (let i = 0; i < dropdowns.length; i++) {
+      const openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains("show")) {
+        openDropdown.classList.remove("show");
+      }
+    }
+  }
+};
 
 function resetGame() {
   location.reload();

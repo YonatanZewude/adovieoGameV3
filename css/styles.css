@@ -407,6 +407,139 @@ body {
   -webkit-animation: cool-fast-rotate-scale-blur-in 0.3s ease-out both;
   animation: cool-fast-rotate-scale-blur-in 0.3s ease-out both;
 }
+/* Style för dropdown-menyn */
+.dropdown {
+  position: relative;
+  display: inline-block;
+  font-family: Arial, sans-serif;
+}
+
+/* Knapp för att öppna dropdown */
+.dropdown-button {
+  background-color: #007bff;
+  color: white;
+  padding: 12px 20px;
+  font-size: 22px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 140px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+  transition: background-color 0.3s ease;
+}
+
+/* Pil-ikon bredvid "Version" texten */
+.dropdown-button .arrow {
+  margin-left: 8px;
+  font-size: 16px;
+  transition: transform 0.3s ease;
+}
+
+/* Roterar pilen när menyn är öppen */
+.dropdown-button.active .arrow {
+  transform: rotate(180deg);
+}
+
+.dropdown-button:hover {
+  background-color: #0056b3;
+}
+
+/* Innehållet i dropdown-menyn */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  border-radius: 6px;
+  overflow: hidden;
+  z-index: 1;
+  animation: fadeIn 0.3s ease;
+  background-color: rgba(0, 0, 0, 0.5);
+  min-width: 50%;
+  font-size: 8px;
+}
+
+/* Style för knapparna i dropdown-menyn */
+.dropdown-content button {
+  color: #333;
+  text-align: left;
+  border: none;
+  font-size: 26px;
+  width: 100%;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-radius: 5px;
+  background-color: #ffd500;
+  color: #060505;
+  padding: 8px 20px;
+  margin: 6px 0;
+}
+.dropdown-content button:hover {
+  background-color: #a27d0c; /* Slightly darker yellow on hover */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15); /* Adds a shadow for depth */
+}
+@media (max-width: 600px) {
+  .dropdown-content button {
+    width: 100%;
+    display: block;
+    margin: 5px;
+    font-size: 14px;
+  }
+  .dropdown {
+    position: relative;
+    display: inline-block;
+    font-family: Arial, sans-serif;
+  }
+
+  /* Knapp för att öppna dropdown */
+  .dropdown-button {
+    padding: 6px 10px;
+    font-size: 12px;
+    border: none;
+    border-radius: 4px;
+    min-width: 100px;
+  }
+
+  /* Pil-ikon bredvid "Version" texten */
+  .dropdown-button .arrow {
+    margin-left: 6px;
+    font-size: 8px;
+    transition: transform 0.3s ease;
+  }
+
+  /* Innehållet i dropdown-menyn */
+  .dropdown-content {
+    min-width: 50%;
+    font-size: 8px;
+  }
+}
+
+.show {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Visar dropdown-menyn när .show läggs till */
+.show {
+  display: block;
+}
+
+.show {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
 
 /* Keyframes for fast and cool animation */
 @-webkit-keyframes cool-fast-rotate-scale-blur-in {

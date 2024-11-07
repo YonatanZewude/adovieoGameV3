@@ -28,16 +28,14 @@
         <!-- <section id="Gamemodebutton"><button id="Limited_number_of_moves">Moves</button><button
                 id="Unlimited_number_of_moves">Points</button></section>-->
 
-        <!-- Lägg till detta i din HTML-fil -->
-        <div id="buttonContainer">
-            <!-- Lägg till knappar för att starta Version 3.1 och 3.2 -->
-            <div id="buttonContainer">
-                <button id="Version1Button">Start Version 1</button>
-                <button id="Version2Button">Start Version 2</button>
-                <button id="Version3_1Button">Start Version 3.1</button>
-                <button id="Version3_2Button">Start Version 3.2</button>
+        <div class="dropdown">
+            <button class="dropdown-button">Version <span class="arrow">▼</span></button>
+            <div class="dropdown-content" id="buttonContainer">
+                <button id="Version1Button">Limited moves Unlimited Score - No empty cell</button>
+                <button id="Version2Button">Unlimited moves Limited Score - No empty cell</button>
+                <button id="Version3_1Button">Limited moves Unlimited Score- With empty cell</button>
+                <button id="Version3_2Button">Unlimited moves Limited Score - With empty cell</button>
             </div>
-
         </div>
 
         <section id="game-board">
