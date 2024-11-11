@@ -262,15 +262,17 @@ function handleDrop(event) {
 
 function fillEmptyCells(fillCount) {
   const emptyCells = Array.from(document.querySelectorAll(".cell img[src='']"));
-  const cellsToFill = emptyCells.slice(0, fillCount);
-  cellsToFill.forEach((cell) => {
-    cell.src = getRandomEmoji();
-  });
+
+  if (emptyCells.length > 0) {
+    emptyCells[0].src = getRandomEmoji();
+  }
 }
 
 function getNextEmojiInSequence(matchedEmoji) {
   const matchedIndex = emojiSequence.findIndex((img) => img === matchedEmoji);
-  return emojiSequence[(matchedIndex + 1) % emojiSequence.length];
+  return matchedIndex !== -1
+    ? emojiSequence[(matchedIndex + 1) % emojiSequence.length]
+    : getRandomEmoji();
 }
 
 function removeMatchedClass(event) {
